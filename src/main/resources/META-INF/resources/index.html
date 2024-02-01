@@ -23,7 +23,7 @@
     <nav class="navbar navbar-default navbar-pf" role="navigation">
         <div class="navbar-header">
             <a class="navbar-brand" href="/">
-                <p><strong>>> Quarkus Chat!</strong></p>
+                <p><strong>> Quarkus Chat!</strong></p>
             </a>
         </div>
     </nav>
@@ -40,9 +40,9 @@
         </div>
         <div class="row">
             <input class="col-md-6" id="msg" type="text" placeholder="enter your message">
+            <input class="col-md-2" id="recipient" type="text" placeholder="recipient (optional)">
             <button class="col-md-1 btn btn-primary" id="send" type="button" disabled>send</button>
         </div>
-
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -89,11 +89,6 @@
                     $("#name").attr("disabled", true);
                     $("#msg").focus();
                 };
-                // socket.onmessage = function (m) {
-                //     console.log("Got message: " + m.data);
-                //     $("#chat").append(m.data + "\n");
-                //     scrollToBottom();
-                // };
                 socket.onmessage = function (m) {
                     console.log("Got message: " + m.data);
                     displayMessage(m.data);
@@ -105,11 +100,17 @@
         var sendMessage = function () {
             if (connected) {
                 var value = $("#msg").val();
-                console.log("Sending " + value);
-                socket.send(value);
+                var recipient = $("#recipient").val(); // Add this line to get recipient value
+                var message = {
+                    content: value,
+                    recipient: recipient
+                };
+                console.log("Sending " + JSON.stringify(message));
+                socket.send(JSON.stringify(message));
                 $("#msg").val("");
             }
         };
+
         var displayMessage = function (message) {
             $("#chat").append(message + "\n");
         };
